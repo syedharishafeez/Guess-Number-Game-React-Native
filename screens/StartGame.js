@@ -16,10 +16,10 @@ const startGame = props => {
     const chosenNumber = parseInt(enteredNumber);
     if (
       isNaN(chosenNumber) ||
-      parseInt(chosenNumber) < 0 ||
+      parseInt(chosenNumber) < 1 ||
       parseInt(chosenNumber) > 99
     ) {
-      Alert.alert("Invalid Number", "Please enter a number between 0 - 99", [
+      Alert.alert("Invalid Number", "Please enter a number from 1 - 99", [
         { text: "Okay", style: "destructive" }
       ]);
       return;
