@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { StyleSheet, View, Text, Button, Alert } from "react-native";
 import NumberContainer from "../components/NumberContainer";
 import Card from "../components/Card";
@@ -13,11 +13,36 @@ const generateRandomNumber = (min, max, exclude) => {
 };
 
 const GameScreen = props => {
-  const [lowerValue, setLowerValue] = useState(0);
-  const [UpperValue, setUpperValue] = useState(100);
   const [currentGuess, setCurrentGuess] = useState(
     generateRandomNumber(0, 100, props.userNumber)
   );
+  const currentLow = useRef(1);
+  const currentHigh = useRef(100);
+
+  const nextGuess = direction => {
+    if (
+      (direction === "lower" && currentGuess < props.userNumber) ||
+      (direction === "higher" && currentGuess > props.userNumber)
+    ) {
+      Alert.alert("Don't Cheat", "Hey! DOn't mis-guide the computer", [
+        { text: "Cancel", style: "cancel" }
+      ]);
+    } else {
+      if (direction === "lower") {
+        currentHigh.current = currentGuess;
+      } else {
+        currentLow.current = currentGuess;
+      }
+      console.log();
+      setCurrentGuess(
+        generateRandomNumber(
+          currentLow.current,
+          currentHigh.current,
+          props.userNumber
+        )
+      );
+    }
+  };
 
   console.log("currentGuess = ", currentGuess);
   return (
@@ -35,52 +60,10 @@ const GameScreen = props => {
           }}
         >
           <View style={{ width: 80 }}>
-            <Button
-              title="lower"
-              onPress={() => {
-                if (currentGuess < props.userNumber) {
-                  Alert.alert("Don't Cheat", "Don't misguide the computer", [
-                    { text: "Cancel", style: "cancel" }
-                  ]);
-                } else {
-                  let rndNum = generateRandomNumber(
-                    lowerValue,
-                    currentGuess,
-                    props.userNumber
-                  );
-                  setCurrentGuess(rndNum);
-                  if (rndNum > lowerValue && rndNum < props.userNumber) {
-                    setLowerValue(rndNum);
-                  } else if (rndNum < UpperValue && rndNum > props.userNumber) {
-                    setUpperValue(rndNum);
-                  }
-                }
-              }}
-            />
+            <Button title="lower" onPress={() => nextGuess("lower")} />
           </View>
           <View style={{ width: 80 }}>
-            <Button
-              title="Higher"
-              onPress={() => {
-                if (currentGuess > props.userNumber) {
-                  Alert.alert("Don't Cheat", "Don't misguide the computer", [
-                    { text: "Cancel", style: "cancel" }
-                  ]);
-                } else {
-                  let rndNum = generateRandomNumber(
-                    currentGuess,
-                    UpperValue,
-                    props.userNumber
-                  );
-                  setCurrentGuess(rndNum);
-                  if (rndNum > lowerValue && rndNum < props.userNumber) {
-                    setLowerValue(rndNum);
-                  } else if (rndNum < UpperValue && rndNum > props.userNumber) {
-                    setUpperValue(rndNum);
-                  }
-                }
-              }}
-            />
+            <Button title="Higher" onPress={() => nextGuess("higher")} />
           </View>
         </View>
       </Card>
