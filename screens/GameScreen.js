@@ -1,14 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { StyleSheet, View, Text, Button, Alert } from "react-native";
 import NumberContainer from "../components/NumberContainer";
 import Card from "../components/Card";
 
 const generateRandomNumber = (min, max, exclude) => {
   const randomNumber = Math.floor(Math.random() * (max - min) + min);
-  console.log("randomNumber = ", randomNumber);
-  if (randomNumber === exclude) {
-    return "Game Over";
-  }
   return randomNumber;
 };
 
@@ -18,6 +14,15 @@ const GameScreen = props => {
   );
   const currentLow = useRef(1);
   const currentHigh = useRef(100);
+
+  const [gameRound, setGameRound] = useState(0);
+
+  const { userNumber, setRounds } = props;
+  useEffect(() => {
+    if (currentGuess === props.userNumber) {
+      props.setRounds(gameRound + 1);
+    }
+  }, [currentGuess, userNumber, setRounds]);
 
   const nextGuess = direction => {
     if (
@@ -33,7 +38,6 @@ const GameScreen = props => {
       } else {
         currentLow.current = currentGuess;
       }
-      console.log();
       setCurrentGuess(
         generateRandomNumber(
           currentLow.current,
@@ -41,10 +45,10 @@ const GameScreen = props => {
           props.userNumber
         )
       );
+      setGameRound(gameRound + 1);
     }
   };
 
-  console.log("currentGuess = ", currentGuess);
   return (
     <View
       style={{ justifyContent: "center", alignItems: "center", marginTop: 20 }}

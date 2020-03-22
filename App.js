@@ -3,20 +3,28 @@ import { StyleSheet, View, Text } from "react-native";
 import Header from "./components/Header";
 import StartGame from "./screens/StartGame";
 import GameScreen from "./screens/GameScreen";
+import GameOver from "./screens/GameOver";
 
 export default function App() {
   const [userNumber, setUserNumber] = useState();
+  const [rounds, setRounds] = useState(0);
 
   const checkUserNumber = selectedNumber => {
-    console.log("selectedNumber = ", selectedNumber);
     setUserNumber(selectedNumber);
   };
 
-  console.log("userNumber = ", userNumber);
-
   let content = <StartGame onGameScreen={checkUserNumber} />;
-  if (userNumber) {
-    content = <GameScreen userNumber={userNumber} />;
+  if (userNumber && rounds <= 0) {
+    content = <GameScreen userNumber={userNumber} setRounds={setRounds} />;
+  } else if (rounds > 0) {
+    content = (
+      <GameOver
+        userNumber={userNumber}
+        totalRounds={rounds}
+        setUserNumber={setUserNumber}
+        setRounds={setRounds}
+      />
+    );
   }
 
   return (
